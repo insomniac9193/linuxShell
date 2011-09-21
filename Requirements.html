@@ -1,0 +1,215 @@
+<html><head>
+<title>W4118 Fall 2011 - Homework 1</title></head><body bgcolor="#ffffff"><p>
+</p><center><h2>Homework 1<br>
+<font size="-1">W4118 Fall 2011<br>
+<font color="RED">
+UPDATED: Thursday 9/8/2011 at 1:03pm EST<br>
+DUE: Monday 9/19/2011 at 11:59pm EST</font></font>
+</h2></center>
+
+<p>
+All homework submissions are to be made via <a href="http://git-scm.com">Git</a>.
+You must submit a detailed list of references as part your homework
+submission indicating clearly what sources you referenced for each
+homework problem.  You do not need to cite the course textbooks and
+instructional staff.  All other sources must be cited.
+<!--
+using
+these <a href="https://os1.cs.columbia.edu/board/viewtopic.php?f=12&t=6">instructions</a>.  
+-->
+<p>
+The Git repository you will use can be cloned using
+<tt>git clone gitosis@os1.cs.columbia.edu:UNI/hmwk1.git</tt> (Replace UNI with your
+own UNI).
+A public/private SSH key-pair will be emailed to you which you will
+use to access the Git server.
+Be aware that commits pushed after the deadline will not be
+considered.
+Refer to the homework policy section on the
+<a href="http://www.cs.columbia.edu/~nieh/teaching/w4118">class web
+site</a> for further details.
+
+</p><h3>Non-Programming Problems:</h3>
+
+Exercise numbers refer to the course textbook, <i>Operating
+System Concepts Essentials</i>. Each problem is worth 5 points.
+<P>
+<OL>
+<P><LI>Exercise 1.8
+
+<P><LI>Exercise 2.13
+
+<P><LI>Exercise 2.21
+
+<P><LI>Exercise 2.25
+
+<P><LI>Exercise 2.26
+
+<P><LI>If a Unix program creates a new process by calling fork, can a
+    bug in the child process, such as a bad array reference, damage
+    the parent process?  Explain.
+
+<P><LI>The example below shows using lseek to print the contents of a
+    file backwards:
+<pre>
+fd = open("textfile", O_RDONLY);
+fptr = lseek(fd, (off_t)-1, SEEK_END);
+while (fptr != -1) {
+        read(fd, buf, 1);
+        write(1, buf, 1);
+        fptr = lseek(fd, (off_t)-1, SEEK_CUR);
+}
+</pre>
+Explain why it is not a good technique for doing so.  Present a
+program that does it better.
+
+<P><LI>Consider the various definitions of an operating system.
+Consider whether the operating system should include functionality such
+as web browsers and window systems.  Argue both that it should and that
+it should not, and support your answer.
+</OL>
+<P>
+
+</p><h3>Programming Problems:</h3>
+
+For all programming problems you will be required to submit 
+source code, a README file documenting your files and code, 
+and a test run of your programs.  The README should explain any way in
+which your solution differs from what was assigned, and any
+assumptions you made.  Refer to the homework submission page on the
+class web site for additional submission instructions.
+<p>
+You should make sure your programs compile and run using the VMware
+virtual appliance used for this class.  Information on downloading and
+using the appliance is listed in the intro section of the class
+in <a href="http://courseworks.columbia.edu">Courseworks</a>.
+<p>
+</p>
+
+Simple Shell (60 Pts.)
+The shell itself is just another user program. The
+      files <KBD>/bin/sh</KBD>, <KBD>/bin/bash</KBD>, and
+      <KBD>/bin/tcsh</KBD> are all executable files for shells. The
+      only thing special about your login shell is that it is listed
+      in your login record so that <KBD>/bin/login</KBD> (the program
+      that prompts you for your password) knows what program to start
+      when you log in. If you run ``<KBD>ypmatch <VAR>id</VAR>
+      passwd</KBD>'', replacing <VAR>id</VAR> with your user ID,
+      you'll see your login record, with your login shell program
+      listed as the last field.
+<P>
+<OL>
+<LI>
+	<P>Write a simple shell in C. Your shell should read a
+	  line from standard input, parse the line to get the command
+	  and its arguments, <CODE>fork</CODE>, and <CODE>exec</CODE>
+	  the command. Your shell should wait for commands to finish,
+	  and should exit when it receives the command
+	  <KBD>exit</KBD>.
+
+	  </P>
+	<UL>
+	    <LI><P>Using the <CODE>system</CODE> function is not allowed,
+	      as it just invokes the system's <KBD>/bin/sh</KBD> shell
+	      to do all the work.
+	      </P>
+	    <LI><P>You may assume command line arguments are separated
+	      by whitespace.  Don't do anything special for
+	      backslashes, quotes, ampersands or other characters that
+	      are ``special'' in other shells. Note that this means
+	      commands in your shell will not be able to operate on
+	      filenames with spaces in them!
+	      </P>
+	    <LI><P>You may set a reasonable maximum on the number of
+	      command line arguments, but your shell should handle
+	      input lines of any length.
+	      </P>
+	    <LI><P>The executable file for your shell should be named
+	      <KBD><font color="RED">w4118_</font>sh</KBD>. When testing, make sure you execute your
+	      <KBD><font color="RED">w4118_</font>sh</KBD> and not <KBD>/bin/sh</KBD>.
+	      </P>
+	</UL>
+
+<LI><P>A few shell commands are not separate programs at all,
+	  but are handled directly by the shell program. You have
+	  already implemented <KBD>exit</KBD>, which is an example of
+	  this. Now implement <KBD>cd</KBD>, the change directory
+	  command. You will need to invoke the <CODE>chdir</CODE>
+	  system call to do this. Note that if the call to
+	  <CODE>chdir</CODE> fails, you probably don't want to exit
+	  the shell but instead should handle the error appropriately.
+	  </P>
+
+	<LI><P>Some convenient builtins present in many shells are
+	  <KBD>pushd</KBD>, <KBD>popd</KBD>, and
+	  <KBD>dirs</KBD>. Implement these in your shell.
+	  </P>
+	<UL>
+	    <LI><P><KBD>pushd</KBD> works like <KBD>cd</KBD>, but
+	      pushes the directory you switched from onto a stack.
+	      </P>
+	    <LI><P><KBD>popd</KBD> pops the top directory off the
+	      stack, and <KBD>cd</KBD>'s to it.  In other words, a
+	      <KBD>pushd</KBD> followed by a <KBD>popd</KBD> should
+	      bring you back to the directory you were in before the
+	      <KBD>pushd</KBD>. 
+	      </P>
+	    <LI><P><KBD>dirs</KBD> prints the contents of the stack.
+	      </P>
+	</UL>
+
+	<LI><P>The <VAR>path</VAR> variable holds a list of possible
+	  paths in which to search for executables. The list of paths
+	  is empty by default. 
+	  You should implement a builtin command to control this
+	  variable: <KBD>path [+|- /some/dir]</KBD>
+	</P>
+	<UL>
+	<LI><P> <KBD>path</KBD> (without arguments) displays all the
+	  entries in the list separated by colons, 
+	  e.g. <VAR>"/bin:/usr/bin"</VAR>.</P>
+	<LI><P> <KBD>path + /some/dir</KBD> appends the given
+	  pathname to the path list.</P>
+	<LI><P> <KBD>path - /some/dir</KBD> removes the given
+	  pathname from the path list.</P>
+
+</OL>
+
+</li></var></var></ol><var><var>
+<ol>
+<center><h3>Additional Requirements</h3></center>
+<li>All code (including test programs) must be written in C.
+</li><li>Make at least ten commits with Git.  The point is to make
+  incremental changes and use an iterative development cycle.  
+</li><li>Follow the following coding style rules:
+<ul>
+<li>Tab size: 8 spaces.
+<li>Do not have more that 3 levels of indentations (unless the
+    function is extremely simple).
+<li>Do not have lines that goes after the 80th column (with rare
+    exceptions).
+<li>Do not comment your code to say obvious things. Use /* ... */
+    and not // ...
+<li>Follow 
+  the <a href="http://www.kernel.org/doc/Documentation/CodingStyle">Linux
+    kernel coding style</a>.
+  Use <a href="https://github.com/mirrors/linux-2.6/blob/master/scripts/checkpatch.pl">checkpatch</a>, a script which checks coding style rules.
+</ul>
+</li><li>Use a makefile to control the compilation of your code.  The makefile should have at least a default target that builds all assigned programs. 
+</li><li>When using <tt>gcc</tt> to compile your code, use the <tt>-Wall</tt> switch to ensure that all warnings are displayed.  <b>Do not</b> be satisfied with code that merely compiles; it should compile with no warnings.  You will lose points if your code produces warnings when compiled.
+</li><li>Check the return values of all functions utilizing system resources.  Do not blithely assume all requests for memory will succeed and all writes to a file will occur correctly.  Your code should handle errors properly.  Many failed function calls should not be fatal to a program.  Typically, a system call will return <tt>-1</tt> in the case of an error (<tt>malloc</tt> will return <tt>NULL</tt>).  
+If a function call sets the <code>errno</code> variable (see the function's man page to find out if it does), you should use the result of <code>strerror(errno)</code> as part of your error message.
+As far as system calls are concerned, you will want to use one of the
+mechanisms described in <a href="http://www.cs.cf.ac.uk/Dave/C/node18.html#SECTION001810000000000000000">Reporting Errors</a> or <a href="http://www.gnu.org/software/libc/manual/html_mono/libc.html#Error%20Reporting">Error Reporting</a>. 
+</li></ol>
+
+<ol><center><h3>Tips</h3></center>
+<li>For this assignment, your primary reference will be <a href="http://www.cs.cf.ac.uk/Dave/C/CE.html">Programming in C</a>.  You might also find the <a href="http://www.gnu.org/software/libc/manual/">Glibc Manual</a> useful.
+</li><li>Many questions about functions and system behaviour can be found in the system manual pages; type in <tt>man</tt> <i>function</i> to get more information about <i>function</i>.  If <i>function</i> is a system call, <tt>man 2</tt> <i>function</i> can ensure that you receive the correct man page, rather than one for a system utility of the same name.
+</li><li>If you are having trouble with basic Unix/Linux behavior, you might want to check out the resources section of the class webpage.
+</li><li>A lot of your problems have happened to other people.  If you have a strange error message, you might want to try searching for the message on <a href="http://www.google.com">Google</a>.
+</li></ol>
+
+
+
+</var></var></body></html>
