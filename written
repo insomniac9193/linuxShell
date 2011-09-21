@@ -1,0 +1,104 @@
+
+1) Exercise 1.8
+  -------------
+a) Set value of a time: Privileged
+
+b) Read the clock: Not a Privileged instruction as you cause no harm by doing this to other processes. 
+
+c) Clear memory: Privileged. memory management is done by OS.
+
+d) Issue a trap instruction: Not a Privileged instruction 
+
+e) Turn of interrupts: Privileged
+
+f) Modify entries in device-status table: Privileged. Device control registers are not accessible to users. So it should be privileged.
+
+g) Switch from user to kernel mode: Privileged
+
+h) Access I/O: Privileged
+
+2) Exercise 2.13
+---------------
+
+Three general method of passing parameters to the OS as are follows:
+a) By using Registers - Parameters can be passed in registers. 
+
+b) By using block or table - In some cases the number of parameters are more then the number of registers a system has. Therefore, in such cases the parameters are stores in a block or table in-memory and then the address of this block is stored as parameter in the registers.
+
+c) By using stack - In this method, the program pushes the parameter on top of the stack and they are later popped off from the stack by the operating system.
+
+The block and the stack approach are very useful as they do not limit the number of parameters passed to the operating system.
+
+
+3) Exercise 2.21
+-----------------
+
+Benefit of microkernel approach is it becomes very easy to extend the operating system. All new services are added to the user space and hence no or very few modifications are required to the kernel as it is small. The resulting operating system is easier to port from one hardware design to the other. Microkernel also provide more security and reliability as most services run in the user process rather than the kernel process.
+
+The microkernel facilitates the interaction between the user programs and system services. The microkernel provides communication facility i.e by message passing model. Messages can be exchanges between the processes directly or indirectly through a common mailbox. Before communication can happen a connection must be opened with the other process.
+
+The disadvantages of microkernel approach is they suffer from performance decrease due to increased system function overhead.
+
+
+4) Exercise 2.25
+-----------------
+
+The guest operating system is nothing but an application running on top of the host operating system. The host operating system has access to the hardware directly. The guest operating system/Virtual machine runs in the user mode of the host operating system. VMware is nothing but an application which helps the host operating system to run multiple guest operating systems. Ex: Linux can run free BSD, Windows NT and Windows XP as the guest operating systems.
+
+Virtual machines can typically run on top Operating systems of any design. I.e the design of the host operating system can be simple layers, microkernels, modules etc. However, VMware Workstation abstracts only Intel X86 and compatible hardware into virtual machines. So one requirement can be that the host operating system should be able to run on Intel X86 architechture. 
+
+
+5) Exercise 2.26
+----------------
+
+Pros of synthesis approach are that, now the system calls will be faster and more efficient because they don't have to pass through different layers. And, at each layer there is an added overhead to the system call as parameters may be modified and data may need to be passed etc.
+
+One more advantage of the synthesis approach is that now we don't have to carefully plan on defining the layers appropriately. Everything will be in the kernel space so that the system call takes the minimum path in the kernel.
+
+Cons of synthesis approach are that, as new modules/routines are added to the kernel space it becomes very complicated and debugging for errors will be a difficult task.
+
+
+6) 
+
+No, a bug in the child process, such as bad array reference CANNOT damage a parent process. 
+
+The reason is, when a parent calls fork() system call,  it creates a copy of itself and a separate adddress space is created for the child. Both the parent and child process have the same code segment but execute independently of each other. Therefore when something fails in the child process the parent process is not effected.   
+
+reference: http://en.wikipedia.org/wiki/Fork_(operating_system)
+
+7)
+
+This code example given uses a very bad technique. The program never terminates for the following reason:
+
+In the while loop, Whenever a read(fd, buf, 1) executes it reads 1 character into the buffer and the file pointer is advanced in the forward direction by 1. At the end of while loop, lseek() function decrements the file position by -1! And this while loops never exits as the read() command is doing a +1 on file position and lseek() is doing a -1!
+
+The alternative for this is to use a pread(). Following is the corrected code:
+
+fd = open("textfile", O_RDONLY);
+fptr = lseek(fd, (off_t)-1, SEEK_END);
+while (fptr != -1) {
+        pread(fd, buf, 1, fptr);
+        write(1, buf, 1);
+        fptr = lseek(fd, (off_t)-1, SEEK_CUR);
+}
+
+pread() reads up to 1 byte from the file descriptor fd at offset (i.e. fptr) from the start of the file. It does not alter the file position ( i.e. position in the file ).
+
+Initially when the while loop is entered the fptr is the offset which is set by lseek() at the end of file. pread() simply reads one byte at an offset (= fptr) from the start of file i.e it will read the last character, at the end of while loop the lseek() will again reduce the file position by 1 and return the offset which will be (filesize - 1). So in the next iteration, the last but one character is read. 
+
+
+8) Operating system should include web browsers and windowing systems
+  -------------------------------------------------------------------
+
+Operating system can be considered as a program which controls the hardware of a computer and provides ways for a user to solve computing problems and satisfy his needs. So, accessing the internet is an extremely common requirements for users these days, at the same time having a graphical user interface helps the user in using the system in a better way as it is very easy to understand and intuitive. It helps even the non-technical/non-computer science background people to use the system very easily. These things have become a very common requirements of any user at the current date. Hence, we can say that browsers and windowing systems should be included in the Operating system. 
+
+
+Operating system should NOT include web browsers and windowing systems
+-----------------------------------------------------------------------
+
+Operating sytem can also be considered as an environment where a user can run various application programs. These application programs require certain common operations such as controlling the I/O devices etc. These common functionalities of controlling and allocating resources are brought together into a single piece of software called as Operating system. 
+
+Therefore operating system should only act like a resource allocator and hence should not include web browsers and windowing systems which are nothing but applications which can run on Operating system. Besides Operating system can exist without web browsers and Windowing systems! 
+
+As we have seen in 1998, Microsoft was suied because it was including too many functionalities in its Operating system. This also prevents application vendors from competing because the OS vendor like Microsoft can use its monopoly to ship its own products with the Operatign system very easily and it hampers the grown of many start up companies. 
+  
